@@ -33,6 +33,10 @@ body {
     font-family: var(--font-family);
 }
 
+li {
+    list-style: none;
+}
+
 ::-webkit-scrollbar {
     width: 4px;
 }
@@ -159,16 +163,16 @@ input[type="checkbox"] {
     cursor: pointer;
 }
 
-.btn-main {
+.btn_main {
     background: var(--cc-dark-70);
     color: var(--cc-white-100);
 }
 
-.btn-main:hover {
+.btn_main:hover {
     background: var(--cc-dark-80);
 }
 
-.btn-main:focus {
+.btn_main:focus {
     background: var(--cc-dark-90);
     outline: solid 1px var(--cc-dark-70);
 }
@@ -186,6 +190,15 @@ textarea {
     caret-color: var(--cc-white-100);
 }
 
+/* select */
+select {
+    background: var(--cc-dark-900);
+    color: var(--cc-white-100);
+    font-family: var(--font-family);
+    padding: 0.5em;
+    outline: 0;
+    border: 0;
+}
 /* ======================== */
 /* DAILY NOTES */
 /* ======================== */
@@ -204,8 +217,56 @@ textarea {
 }
 
 /* ======================== */
-/* RESET */
+/* TASK SECTION */
 /* ======================== */
+.task_section_header {
+    display: flex;
+    justify-content: space-between;
+}
+
 /* ======================== */
-/* RESET */
+/* SORT ELEMENTS */
 /* ======================== */
+.sort_element {
+    position: relative;
+}
+
+.sort_value {
+    position: absolute;
+    background: var(--cc-dark-90);
+    border-radius: 0.5em;
+    right: 0;
+    top: 3em;
+
+    font-size: 1rem;
+    display: flex;
+    flex-direction: column;
+    width: max-content;
+
+    height: 1px;
+    overflow: hidden;
+    padding: 0;
+    visibility: hidden;
+
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.4);
+}
+
+.sort_controll:focus-within ~ .sort_value {
+    visibility: visible;
+    padding: 0.5em;
+    height: auto;
+    overflow: visible;
+}
+
+.sort_value li {
+    display: inline-block;
+    padding: 0.5em;
+    flex-wrap: nowrap;
+    width: 100%;
+    border-radius: 0.5em;
+    cursor: pointer;
+}
+
+.sort_value li:hover {
+    background: var(--cc-dark-80);
+}

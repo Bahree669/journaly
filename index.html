@@ -14,26 +14,26 @@
         <main class="main_container mx-width">
             <section class="grid">
                 <!-- TODO SECTION -->
-                <article class="todo-section">
+                <article class="todo_section">
                     <header class="section_title"><h4>My Day</h4></header>
 
                     <section class="content task_container">
                         <div class="task_card">
                             <input type="checkbox" />
                             <h6>Lorem ipsum dolor sit amet.</h6>
-                            <button class="btn btn-main">Edit</button>
+                            <button class="btn btn_main">Edit</button>
                         </div>
                         <div class="task_card">
                             <input type="checkbox" />
                             <h6>Lorem ipsum dolor sit amet.</h6>
-                            <button class="btn btn-main">Edit</button>
+                            <button class="btn btn_main">Edit</button>
                         </div>
                     </section>
                 </article>
                 <!-- END OF TODO SECTION -->
 
                 <!-- NOTE SECTION -->
-                <article class="note-section">
+                <article class="note_section">
                     <header class="section_title"><h4>Daily Note</h4></header>
 
                     <section class="content daily_note">
@@ -48,14 +48,14 @@
                             ></textarea>
                         </div>
 
-                        <button class="btn btn-main">Add Note</button>
+                        <button class="btn btn_main">Add Note</button>
                     </section>
                 </article>
                 <!-- END OF NOTE SECTION -->
             </section>
 
             <section>
-                <article class="habit-section">
+                <article class="habit_section">
                     <header class="section_title">
                         <h4>Habits Tracker</h4>
                     </header>
@@ -66,26 +66,39 @@
 
             <section class="grid">
                 <!-- TASK SECTION -->
-                <article class="activeTodo-section">
-                    <header class="section_title"><h4>Tasks</h4></header>
+                <article class="activeTodo_section">
+                    <header class="section_title task_section_header">
+                        <h4>Tasks</h4>
+
+                        <div class="sort_element">
+                            <button class="btn btn_main sort_controll">Sort Tasks</button>
+
+                            <ul class="sort_value">
+                                <li>Ascending</li>
+                                <li>Descending</li>
+                                <li>By due date (ascending)</li>
+                                <li>By due date (descending)</li>
+                            </ul>
+                        </div>
+                    </header>
 
                     <section class="content task_container">
                         <div class="task_card">
                             <input type="checkbox" />
                             <h6>Lorem ipsum dolor sit amet.</h6>
-                            <button class="btn btn-main">More</button>
+                            <button class="btn btn_main">More</button>
                         </div>
                         <div class="task_card">
                             <input type="checkbox" />
                             <h6>Lorem ipsum dolor sit amet.</h6>
-                            <button class="btn btn-main">More</button>
+                            <button class="btn btn_main">More</button>
                         </div>
                     </section>
                 </article>
                 <!-- END OF TASK SECTION -->
 
                 <!-- ARCHIVE SECTION -->
-                <article class="archive-section">
+                <article class="archive_section">
                     <header class="section_title"><h4>Archives</h4></header>
 
                     <section class="content"></section>
