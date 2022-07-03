@@ -13,6 +13,8 @@
     --cc-white-100: #fdfdfd;
     --cc-purple-100: #a86bd9;
     --cc-red-100: #a0494d;
+    --cc-green-100: #00e62b;
+    --cc-yellow-100: #ffd100;
 }
 
 /* ======================== */
@@ -91,11 +93,12 @@ input {
     flex-direction: column;
     row-gap: 2em;
     width: 100%;
+    margin-bottom: 3em;
 }
 
 .grid {
     display: grid;
-    grid-template-columns: 2.5fr 1.5fr;
+    grid-template-columns: 2.3fr 1.7fr;
     grid-gap: 1em;
 }
 
@@ -140,6 +143,17 @@ input {
 
 .task_card button {
     margin-left: auto;
+}
+
+.task_card div {
+    display: flex;
+    flex-direction: column;
+}
+
+.task_container div p {
+    margin-left: 0.5em;
+    font-size: 0.8rem;
+    color: var(--cc-green-100);
 }
 
 /* ======================== */
@@ -219,9 +233,15 @@ select {
 /* ======================== */
 /* TASK SECTION */
 /* ======================== */
-.task_section_header {
+.taskSection_header {
     display: flex;
     justify-content: space-between;
+}
+
+.taskSection_nav > ul {
+    display: flex;
+    gap: 0.5em;
+    flex-direction: row-reverse;
 }
 
 /* ======================== */
