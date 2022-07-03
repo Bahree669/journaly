@@ -8,14 +8,27 @@
         <link rel="stylesheet" href="style.css" />
     </head>
     <body>
-        <header class="header mx-width"><h1 class="header_title">My Journal</h1></header>
+        <header class="header mx-width">
+            <h1 class="header_title">My Journal</h1>
+        </header>
         <main class="main_container mx-width">
             <section class="grid">
                 <!-- TODO SECTION -->
                 <article class="todo-section">
                     <header class="section_title"><h4>My Day</h4></header>
 
-                    <section class="content"></section>
+                    <section class="content task_container">
+                        <div class="task_card">
+                            <input type="checkbox" />
+                            <h6>Lorem ipsum dolor sit amet.</h6>
+                            <button>Edit</button>
+                        </div>
+                        <div class="task_card">
+                            <input type="checkbox" />
+                            <h6>Lorem ipsum dolor sit amet.</h6>
+                            <button>Edit</button>
+                        </div>
+                    </section>
                 </article>
                 <!-- END OF TODO SECTION -->
 
@@ -23,16 +36,45 @@
                 <article class="note-section">
                     <header class="section_title"><h4>Daily Note</h4></header>
 
-                    <section class="content"></section>
+                    <section class="content daily_note">
+                        <div class="note">
+                            <p>
+                                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quod unde similique rem cumque
+                                at omnis voluptatem ab perferendis modi repellendus.
+                            </p>
+                        </div>
+                    </section>
                 </article>
                 <!-- END OF NOTE SECTION -->
             </section>
+
+            <section>
+                <article class="habit-section">
+                    <header class="section_title">
+                        <h4>Habits Tracker</h4>
+                    </header>
+
+                    <section class="content"></section>
+                </article>
+            </section>
+
             <section class="grid">
                 <!-- TASK SECTION -->
                 <article class="activeTodo-section">
                     <header class="section_title"><h4>Tasks</h4></header>
 
-                    <section class="content"></section>
+                    <section class="content task_container">
+                        <div class="task_card">
+                            <input type="checkbox" />
+                            <h6>Lorem ipsum dolor sit amet.</h6>
+                            <button>Edit</button>
+                        </div>
+                        <div class="task_card">
+                            <input type="checkbox" />
+                            <h6>Lorem ipsum dolor sit amet.</h6>
+                            <button>Edit</button>
+                        </div>
+                    </section>
                 </article>
                 <!-- END OF TASK SECTION -->
 

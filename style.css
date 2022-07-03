@@ -32,6 +32,26 @@ body {
     font-family: var(--font-family);
 }
 
+::-webkit-scrollbar {
+    width: 4px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: var(--cc-dark-80);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: var(--cc-red-100);
+    border-radius: 100em;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: var(--c-accent-darkBlue-two);
+}
+
 /* ======================== */
 /* TYPOGRAPHY */
 /* ======================== */
@@ -43,9 +63,9 @@ body {
 .section_title {
     font-size: 1.5rem;
     color: var(--cc-white-100);
-    padding: 1em;
+    padding: 0.5em;
     background: var(--cc-dark-90);
-    border-radius: 1em 1em 0 0;
+    border-radius: 0.5em 0.5em 0 0;
 }
 
 button,
@@ -75,9 +95,18 @@ input {
 }
 
 .content {
-    padding: 1em;
+    padding: 0.5em;
     background: var(--cc-dark-80);
-    border-radius: 0 0 1em 1em;
+    border-radius: 0 0 0.5em 0.5em;
+}
+
+.task_container {
+    display: flex;
+    flex-direction: column;
+
+    max-height: 400px;
+    overflow: hidden;
+    overflow-y: auto;
 }
 
 /* ======================== */
@@ -89,14 +118,50 @@ input {
 }
 
 /* ======================== */
-/* RESET */
+/* TASKS CARD */
 /* ======================== */
+.task_card {
+    display: flex;
+    align-items: center;
+    padding: 1em 0.5em;
+}
+
+.task_card h6 {
+    font-size: 1rem;
+    color: var(--cc-white-100);
+    font-weight: normal;
+    margin-left: 0.5em;
+}
+
+.task_card button {
+    margin-left: auto;
+}
+
 /* ======================== */
-/* RESET */
+/* GENERAL INPUT STYLING */
 /* ======================== */
+input[type="checkbox"] {
+    color: var(--cc-purple-100);
+    cursor: pointer;
+}
+
 /* ======================== */
-/* RESET */
+/* DAILY NOTES */
 /* ======================== */
+.daily_note {
+    display: flex;
+    flex-direction: column;
+    row-gap: 1em;
+}
+
+.note {
+    color: var(--cc-white-100);
+    font-size: 1rem;
+    max-height: 400px;
+    overflow: hidden;
+    overflow-y: auto;
+}
+
 /* ======================== */
 /* RESET */
 /* ======================== */
