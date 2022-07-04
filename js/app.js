@@ -1,5 +1,12 @@
 import { createTask } from "./htmlElement.js";
 import { makeId } from "./util.js";
+import {
+    isStorageAvailable,
+    saveToStorage,
+    getItemFromStorage,
+    removeItemFromStorage,
+    dispatchStorageEvent,
+} from "./storage.js";
 
 const userHabits = [];
 const userTasks = [];
@@ -12,13 +19,43 @@ const journal = {
 };
 const userArchives = [];
 
-// ======= RENDER EVENTS
-const RENDER_NOTE = "RENDER_NOTE";
-const RENDER_DAILY_TASK = "RENDER_DAILY_TASK";
+const storage = {
+    journal: "JOURNAL",
+    userTasks: "USER_TASKS",
+    userHabits: "USER_HABITS",
+};
+// check for local storage support
+
+document.addEventListener("DOMContentLoaded", () => {
+    if (isStorageAvailable()) {
+        const savedJournal = getItemFromStorage(storage.journal);
+
+        journal.my_day = savedJournal ? savedJournal.my_day : journal.my_day;
+        journal.daily_note = savedJournal ? savedJournal.daily_note : journal.daily_note;
+
+        renderDailyTask();
+        renderDailyNote();
+    }
+});
+
+// ======= RENDER AND STORAGE EVENTS
+const RENDER_NOTE = "RENDER_NOTE",
+    RENDER_DAILY_TASK = "RENDER_DAILY_TASK",
+    RENDER_HABITS = "RENDER_HABITS",
+    RENDER_TASKS = "RENDER_TASKS",
+    RENDER_ARCHIVE = "RENDER_ARCHIVE",
+    STORAGE_EVENT = "STORAGE_EVENT";
+
+// ======= LOCAL STORAGE
+document.addEventListener(STORAGE_EVENT, () => {
+    console.log(JSON.parse(localStorage.getItem(storage.journal)));
+    console.log(JSON.parse(localStorage.getItem(storage.userTasks)));
+    console.log(JSON.parse(localStorage.getItem(storage.userHabits)));
+});
 
 // ======= DAILY TASKS
-const dailyTaskForm = document.getElementById("myDay_form");
-const dailyTaskContainer = document.getElementById("myDay_tasks");
+const dailyTaskForm = document.getElementById("myDay_form"),
+    dailyTaskContainer = document.getElementById("myDay_tasks");
 
 document.addEventListener("DOMContentLoaded", () => {
     dailyTaskForm.addEventListener("submit", (e) => {
@@ -33,6 +70,7 @@ function addDailyTask(e) {
     const taskObject = createTaskObject(taskName, null);
 
     my_day.unshift(taskObject);
+    saveToStorage(storage.journal, journal);
     renderDailyTask();
 }
 
@@ -47,7 +85,15 @@ export function finishTask(e, targetId) {
 
     const taskObject = { ...targetTask, is_finish: targetTask.is_finish ? false : true };
 
-    my_day.splice(idxTaskInMyDay, 1, taskObject);
+    my_day.splice(idxTaskInMyDay, 1);
+
+    if (taskObject.is_finish) {
+        my_day.push(taskObject);
+    } else {
+        my_day.unshift(taskObject);
+    }
+
+    saveToStorage(storage.journal, journal);
     renderDailyTask();
 }
 
@@ -68,9 +114,9 @@ function displayDailyTask() {
 document.addEventListener(RENDER_DAILY_TASK, displayDailyTask);
 
 // ======= DAILY NOTES
-const dailyNote = document.querySelector(".note_text");
-const dailyNoteControll = document.getElementById("dailyNote_ctrl");
-const dailyNoteInput = document.getElementById("dailyNote_input");
+const dailyNote = document.querySelector(".note_text"),
+    dailyNoteControll = document.getElementById("dailyNote_ctrl"),
+    dailyNoteInput = document.getElementById("dailyNote_input");
 
 dailyNoteInput.addEventListener("input", getDailyNote);
 dailyNoteControll.addEventListener("click", addDailyNote);
@@ -81,7 +127,7 @@ function addDailyNote(e) {
     daily_note.note = noteInput;
     daily_note.isEdit = daily_note.isEdit ? false : true;
 
-    console.log("addDailyNote", daily_note);
+    saveToStorage(storage.journal, journal);
     renderDailyNote();
 }
 
