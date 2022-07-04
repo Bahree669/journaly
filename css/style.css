@@ -74,7 +74,7 @@ li {
 }
 
 .section_title h2 {
-    font-size: 1rem;
+    font-size: 1.2rem;
     color: var(--cc-white-100);
 }
 
@@ -99,7 +99,6 @@ textarea {
 
 .line_through {
     text-decoration: line-through;
-    font-style: italic;
 }
 
 @media screen and (min-width: 800px) {
@@ -122,7 +121,7 @@ textarea {
 .main_container {
     display: flex;
     flex-direction: column;
-    row-gap: 2em;
+    row-gap: 1em;
     width: 100%;
     margin-bottom: 3em;
 }
@@ -156,7 +155,11 @@ textarea {
     flex-direction: column;
 }
 
-@media screen and (min-width: 800px) {
+@media screen and (min-width: 600px) {
+    .main_container {
+        row-gap: 2em;
+    }
+
     .grid {
         grid-template-columns: 2.3fr 1.7fr;
     }
@@ -246,15 +249,7 @@ input[type="text"]:focus {
 
 .btn_main {
     background: var(--cc-dark-70);
-}
-
-.btn_main:hover {
-    background: var(--cc-dark-80);
-}
-
-.btn_main:focus {
-    background: var(--cc-dark-90);
-    outline: solid 1px var(--cc-dark-70);
+    /* position: relative; */
 }
 
 .btn_alert {
@@ -267,6 +262,50 @@ input[type="text"]:focus {
 
 .btn_secondary:focus,
 .btn_alert:focus {
+    outline: solid 1px var(--cc-dark-70);
+}
+
+.add_btn,
+.more_btn {
+    width: 20px;
+    height: 20px;
+
+    display: grid;
+    place-content: center;
+}
+
+.add_icon .bar {
+    width: 15px;
+    height: 1px;
+    background: var(--cc-white-100);
+    position: relative;
+}
+
+.add_icon .bar:last-of-type {
+    transform: rotate(90deg) translateX(-1px);
+}
+
+.more_icon {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    height: 15px;
+}
+
+.more_icon .dot {
+    height: 3px;
+    width: 3px;
+    border-radius: 10em;
+    background: var(--cc-white-100);
+}
+
+.btn_main:hover {
+    background: var(--cc-dark-80);
+}
+
+.btn_main:focus {
+    background: var(--cc-dark-90);
     outline: solid 1px var(--cc-dark-70);
 }
 
@@ -307,6 +346,8 @@ select {
 }
 
 .note_text {
+    display: block;
+    white-space: pre-wrap;
     font-family: var(--font-family);
     font-size: 1rem;
     width: 100%;
@@ -322,8 +363,9 @@ select {
 
 .taskSection_nav > ul {
     display: flex;
-    gap: 0.5em;
     flex-direction: row-reverse;
+    align-items: center;
+    gap: 0.5em;
 }
 
 /* ======================== */
