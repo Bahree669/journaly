@@ -78,16 +78,16 @@ function createTaskObject(taskName, taskDuedate) {
     return { id: makeId(), taskName: taskName, dueDate: taskDuedate, isFinish: false };
 }
 
-export function finishTask(e, targetId) {
+export function finishDailyTask(e, targetId) {
     const { myDay } = journal;
     const targetTask = myDay.filter((task) => task.id === targetId)[0];
     const idxTaskInMyDay = myDay.findIndex((task) => task.id === targetId);
 
-    const taskObject = { ...targetTask, is_finish: targetTask.is_finish ? false : true };
+    const taskObject = { ...targetTask, isFinish: targetTask.isFinish ? false : true };
 
     myDay.splice(idxTaskInMyDay, 1);
 
-    if (taskObject.is_finish) {
+    if (taskObject.isFinish) {
         myDay.push(taskObject);
     } else {
         myDay.unshift(taskObject);
@@ -95,6 +95,25 @@ export function finishTask(e, targetId) {
 
     saveToStorage(storage.journal, journal);
     renderDailyTask();
+}
+
+export function editDailyTask(e, targetId) {
+    const { myDay } = journal;
+    const targetTask = myDay.filter((task) => task.id === targetId)[0];
+    const idxTaskInMyDay = myDay.findIndex((task) => task.id === targetId);
+    const taskName = document.getElementById("taskEdit_input").value;
+
+    const taskObject = { ...targetTask, taskName };
+
+    myDay.splice(idxTaskInMyDay, 1);
+    myDay.unshift(taskObject);
+
+    saveToStorage(storage.journal, journal);
+    renderDailyTask();
+}
+
+export function deleteDailyTask(e, targetId) {
+    console.log(targetId);
 }
 
 function renderDailyTask() {

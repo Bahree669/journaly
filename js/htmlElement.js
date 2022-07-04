@@ -1,4 +1,4 @@
-import { openModal, closeModal, finishTask } from "./app.js";
+import { openModal, closeModal, finishDailyTask, editDailyTask, deleteDailyTask } from "./app.js";
 
 export function createTask(category, task) {
     const { id, taskName, dueDate, isFinish } = task;
@@ -38,23 +38,24 @@ export function createTask(category, task) {
 
     if (category === "TASK") {
         taskContent.append(taskTitle, taskDueDate);
-        container.append(input, taskContent, taskControll, createTaskModal(category, modalId, taskName));
+        container.append(input, taskContent, taskControll, createTaskModal(category, modalId, taskName, id));
     } else {
-        container.append(input, taskTitle, taskControll, createTaskModal(category, modalId, taskName));
+        container.append(input, taskTitle, taskControll, createTaskModal(category, modalId, taskName, id));
     }
 
     return container;
 }
 
-function createTaskModal(category, id, taskName, taskStatus) {
+function createTaskModal(category, modalId, taskName, taskId) {
     const modal = document.createElement("dialog");
-    modal.setAttribute("id", id);
+    modal.setAttribute("id", modalId);
 
     const modalContent = document.createElement("div");
     modalContent.setAttribute("class", "dialog_content");
 
     const input = document.createElement("input");
     input.setAttribute("type", "text");
+    input.setAttribute("id", "taskEdit_input");
     input.setAttribute("placeholder", "What is your goal today?");
     input.setAttribute("value", taskName);
 
@@ -64,16 +65,17 @@ function createTaskModal(category, id, taskName, taskStatus) {
     const saveButton = document.createElement("button");
     saveButton.setAttribute("class", "btn btn_main");
     saveButton.textContent = "Save Edit";
-    // saveButton.addEventListener("click", () => closeModal(id));
+    saveButton.addEventListener("click", (e) => editDailyTask(e, taskId));
 
     const deleteButton = document.createElement("button");
     deleteButton.setAttribute("class", "btn btn_alert");
     deleteButton.textContent = "Delete Task";
+    deleteButton.addEventListener("click", (e) => deleteDailyTask(e, taskId));
 
     const closeButton = document.createElement("button");
     closeButton.setAttribute("class", "btn btn_secondary");
     closeButton.textContent = "Cancel";
-    closeButton.addEventListener("click", () => closeModal(id));
+    closeButton.addEventListener("click", () => closeModal(modalId));
 
     const modalControll = document.createElement("div");
     modalControll.setAttribute("class", "dialog_ctrl");
