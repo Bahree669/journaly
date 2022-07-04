@@ -5,7 +5,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>My Journal</title>
-        <link rel="stylesheet" href="style.css" />
+        <link rel="stylesheet" href="css/style.css" />
     </head>
     <body>
         <header class="header mx-width">
@@ -14,41 +14,58 @@
         <main class="main_container mx-width">
             <section class="grid">
                 <!-- TODO SECTION -->
-                <article class="todo_section">
-                    <header class="section_title"><h4>My Day</h4></header>
+                <article class="myDay_section">
+                    <header class="section_title taskSection_header">
+                        <h2>My Day</h2>
 
-                    <section class="content task_container">
-                        <div class="task_card">
-                            <input type="checkbox" />
-                            <h6>Lorem ipsum dolor sit amet.</h6>
-                            <button class="btn btn_main">Edit</button>
+                        <div>
+                            <button class="btn btn_main" id="myDay_addTask">Add Task</button>
+
+                            <dialog id="myDay_dialog">
+                                <div class="dialog_content">
+                                    <h4>Add Task</h4>
+
+                                    <form id="myDay_form" class="myDay_form">
+                                        <div class="input_container">
+                                            <input
+                                                type="text"
+                                                placeholder="Go to the store"
+                                                id="taskTitle"
+                                                name="task title"
+                                                autocomplete="off"
+                                            />
+                                        </div>
+
+                                        <button type="submit" class="btn btn_main">Add Task</button>
+                                    </form>
+
+                                    <button class="btn btn_secondary" id="myDay_cancelTask">Cancel</button>
+                                </div>
+                            </dialog>
                         </div>
-                        <div class="task_card">
-                            <input type="checkbox" />
-                            <h6>Lorem ipsum dolor sit amet.</h6>
-                            <button class="btn btn_main">Edit</button>
-                        </div>
-                    </section>
+                    </header>
+
+                    <section class="content task_container" id="myDay_tasks"></section>
                 </article>
                 <!-- END OF TODO SECTION -->
 
                 <!-- NOTE SECTION -->
                 <article class="note_section">
-                    <header class="section_title"><h4>Daily Note</h4></header>
+                    <header class="section_title"><h2>Daily Note</h2></header>
 
                     <section class="content daily_note">
                         <div class="note">
-                            <!-- <p>What sum up your day?</p> -->
+                            <pre class="note_text"></pre>
 
                             <textarea
                                 name="daily-note"
                                 placeholder="What makes you feel grateful today?"
-                                id="dailyNote"
+                                id="dailyNote_input"
                                 rows="5"
                             ></textarea>
                         </div>
 
-                        <button class="btn btn_main">Add Note</button>
+                        <button class="btn btn_main" id="dailyNote_ctrl">Add Note</button>
                     </section>
                 </article>
                 <!-- END OF NOTE SECTION -->
@@ -57,54 +74,74 @@
             <section>
                 <article class="habit_section">
                     <header class="section_title">
-                        <h4>Habits Tracker</h4>
+                        <h2>Habits Tracker</h2>
                     </header>
 
-                    <section class="content"></section>
+                    <section class="content">
+                        <table class="habit_table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Running</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>01/10/2020</td>
+                                    <td>true</td>
+                                </tr>
+                                <tr>
+                                    <td>02/10/2020</td>
+                                    <td>true</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </section>
                 </article>
             </section>
 
             <section class="grid">
                 <!-- TASK SECTION -->
-                <article class="activeTodo_section">
-                    <header class="section_title task_section_header">
-                        <h4>Tasks</h4>
+                <article class="taskSection">
+                    <header class="section_title taskSection_header">
+                        <h2>Tasks</h2>
 
-                        <div class="sort_element">
-                            <button class="btn btn_main sort_controll">Sort Tasks</button>
+                        <nav class="taskSection_nav">
+                            <ul>
+                                <li>
+                                    <div class="sort_element">
+                                        <button class="btn btn_main sort_controll">Sort Tasks</button>
 
-                            <ul class="sort_value">
-                                <li>Ascending</li>
-                                <li>Descending</li>
-                                <li>By due date (ascending)</li>
-                                <li>By due date (descending)</li>
+                                        <ul class="sort_value">
+                                            <li>Ascending</li>
+                                            <li>Descending</li>
+                                            <li>By due date (ascending)</li>
+                                            <li>By due date (descending)</li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li>
+                                    <button class="btn btn_main">Add Tasks</button>
+                                </li>
                             </ul>
-                        </div>
+                        </nav>
                     </header>
 
-                    <section class="content task_container">
-                        <div class="task_card">
-                            <input type="checkbox" />
-                            <h6>Lorem ipsum dolor sit amet.</h6>
-                            <button class="btn btn_main">More</button>
-                        </div>
-                        <div class="task_card">
-                            <input type="checkbox" />
-                            <h6>Lorem ipsum dolor sit amet.</h6>
-                            <button class="btn btn_main">More</button>
-                        </div>
-                    </section>
+                    <section class="content task_container"></section>
                 </article>
                 <!-- END OF TASK SECTION -->
 
                 <!-- ARCHIVE SECTION -->
                 <article class="archive_section">
-                    <header class="section_title"><h4>Archives</h4></header>
+                    <header class="section_title"><h2>Archives</h2></header>
 
                     <section class="content"></section>
                 </article>
                 <!-- END OF ARCHIVE SECTION -->
             </section>
         </main>
+
+        <!-- DO NOT REMOVE THIS LINE -->
+        <script src="js/app.js" type="module"></script>
     </body>
 </html>
