@@ -97,7 +97,7 @@ export function finishDailyTask(e, targetId) {
     renderDailyTask();
 }
 
-export function editDailyTask(e, targetId) {
+export function editDailyTask(targetId) {
     const { myDay } = journal;
     const targetTask = myDay.filter((task) => task.id === targetId)[0];
     const idxTaskInMyDay = myDay.findIndex((task) => task.id === targetId);
@@ -112,8 +112,13 @@ export function editDailyTask(e, targetId) {
     renderDailyTask();
 }
 
-export function deleteDailyTask(e, targetId) {
-    console.log(targetId);
+export function deleteDailyTask(targetId) {
+    const { myDay } = journal;
+    const idxTaskInMyDay = myDay.findIndex((task) => task.id === targetId);
+    myDay.splice(idxTaskInMyDay, 1);
+
+    saveToStorage(storage.journal, journal);
+    renderDailyTask();
 }
 
 function renderDailyTask() {

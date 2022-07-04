@@ -65,12 +65,12 @@ function createTaskModal(category, modalId, taskName, taskId) {
     const saveButton = document.createElement("button");
     saveButton.setAttribute("class", "btn btn_main");
     saveButton.textContent = "Save Edit";
-    saveButton.addEventListener("click", (e) => editDailyTask(e, taskId));
+    saveButton.addEventListener("click", () => editDailyTask(taskId));
 
     const deleteButton = document.createElement("button");
     deleteButton.setAttribute("class", "btn btn_alert");
     deleteButton.textContent = "Delete Task";
-    deleteButton.addEventListener("click", (e) => deleteDailyTask(e, taskId));
+    deleteButton.addEventListener("click", () => deleteDailyTask(taskId));
 
     const closeButton = document.createElement("button");
     closeButton.setAttribute("class", "btn btn_secondary");

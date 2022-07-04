@@ -252,14 +252,22 @@ input[type="text"]:focus {
     background: var(--cc-dark-80);
 }
 
-.btn_main:focus-within {
+.btn_main:focus {
     background: var(--cc-dark-90);
     outline: solid 1px var(--cc-dark-70);
 }
 
+.btn_alert {
+    background: var(--cc-red-100);
+}
+
 .btn_secondary {
     background: var(--cc-dark-90);
-    color: var(--cc-white-100);
+}
+
+.btn_secondary:focus,
+.btn_alert:focus {
+    outline: solid 1px var(--cc-dark-70);
 }
 
 /* textarea */
@@ -301,7 +309,6 @@ select {
 .note_text {
     font-family: var(--font-family);
     font-size: 1rem;
-    display: none;
     width: 100%;
 }
 
@@ -370,6 +377,7 @@ th {
     padding: 0.5em;
     flex-wrap: nowrap;
     width: 100%;
+    font-size: 0.9rem;
     border-radius: 0.5em;
     cursor: pointer;
     color: var(--cc-white-100);
@@ -412,6 +420,13 @@ dialog::backdrop {
 
 .dialog_content button {
     width: 100%;
+}
+
+.dialog_ctrl {
+    display: flex;
+    flex-direction: column;
+    row-gap: 0.5em;
+    margin-top: 1.5em;
 }
 
 @media screen and (min-width: 800px) {
