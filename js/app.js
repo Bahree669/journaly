@@ -121,10 +121,8 @@ const dailyNote = document.querySelector(".note_text"),
 dailyNoteInput.addEventListener("input", getDailyNote);
 dailyNoteControll.addEventListener("click", addDailyNote);
 
-let noteInput;
 function addDailyNote(e) {
     const { daily_note } = journal;
-    daily_note.note = noteInput;
     daily_note.isEdit = daily_note.isEdit ? false : true;
 
     saveToStorage(storage.journal, journal);
@@ -132,11 +130,15 @@ function addDailyNote(e) {
 }
 
 function getDailyNote() {
-    noteInput = this.value;
+    const { daily_note } = journal;
+
+    daily_note.note = this.value;
+    dailyNoteInput.value = daily_note.note;
 }
 
 function displayNote() {
     const { daily_note } = journal;
+
     dailyNote.textContent = daily_note.note || `🌌 Do not go gentle into that good night. 🌌`;
 
     if (daily_note.isEdit) {
@@ -147,8 +149,9 @@ function displayNote() {
         dailyNoteControll.textContent = "Add Note";
         dailyNote.style.display = "none";
         dailyNoteInput.style.display = "flex";
-        dailyNoteInput.value = daily_note.note || "";
     }
+
+    dailyNoteInput.value = daily_note.note || "";
 }
 
 function renderDailyNote() {
