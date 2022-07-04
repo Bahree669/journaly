@@ -20,10 +20,6 @@ export function removeItemFromStorage(storageKey) {
     localStorage.clear(storageKey);
 }
 
-export function loadDataFromStorage(storageKey) {
-    return localStorage;
-}
-
 export function dispatchStorageEvent(event) {
     document.dispatchEvent(new Event(event));
 }

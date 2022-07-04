@@ -11,8 +11,8 @@ import {
 const userHabits = [];
 const userTasks = [];
 const journal = {
-    my_day: [],
-    daily_note: {
+    myDay: [],
+    dailyNote: {
         note: "",
         isEdit: false,
     },
@@ -30,8 +30,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (isStorageAvailable()) {
         const savedJournal = getItemFromStorage(storage.journal);
 
-        journal.my_day = savedJournal ? savedJournal.my_day : journal.my_day;
-        journal.daily_note = savedJournal ? savedJournal.daily_note : journal.daily_note;
+        journal.myDay = savedJournal ? savedJournal.myDay : journal.myDay;
+        journal.dailyNote = savedJournal ? savedJournal.dailyNote : journal.dailyNote;
 
         renderDailyTask();
         renderDailyNote();
@@ -64,33 +64,33 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function addDailyTask(e) {
-    const { my_day } = journal;
+    const { myDay } = journal;
     e.preventDefault();
     const taskName = document.getElementById("taskTitle").value;
     const taskObject = createTaskObject(taskName, null);
 
-    my_day.unshift(taskObject);
+    myDay.unshift(taskObject);
     saveToStorage(storage.journal, journal);
     renderDailyTask();
 }
 
 function createTaskObject(taskName, taskDuedate) {
-    return { id: makeId(), task_title: taskName, due_date: taskDuedate, is_finish: false };
+    return { id: makeId(), taskName: taskName, dueDate: taskDuedate, isFinish: false };
 }
 
 export function finishTask(e, targetId) {
-    const { my_day } = journal;
-    const targetTask = my_day.filter((task) => task.id === targetId)[0];
-    const idxTaskInMyDay = my_day.findIndex((task) => task.id === targetId);
+    const { myDay } = journal;
+    const targetTask = myDay.filter((task) => task.id === targetId)[0];
+    const idxTaskInMyDay = myDay.findIndex((task) => task.id === targetId);
 
     const taskObject = { ...targetTask, is_finish: targetTask.is_finish ? false : true };
 
-    my_day.splice(idxTaskInMyDay, 1);
+    myDay.splice(idxTaskInMyDay, 1);
 
     if (taskObject.is_finish) {
-        my_day.push(taskObject);
+        myDay.push(taskObject);
     } else {
-        my_day.unshift(taskObject);
+        myDay.unshift(taskObject);
     }
 
     saveToStorage(storage.journal, journal);
@@ -102,10 +102,10 @@ function renderDailyTask() {
 }
 
 function displayDailyTask() {
-    const { my_day } = journal;
+    const { myDay } = journal;
 
     dailyTaskContainer.innerHTML = "";
-    for (const task of my_day) {
+    for (const task of myDay) {
         const taskCard = createTask("MYDAY", task);
         dailyTaskContainer.append(taskCard);
     }
@@ -114,7 +114,7 @@ function displayDailyTask() {
 document.addEventListener(RENDER_DAILY_TASK, displayDailyTask);
 
 // ======= DAILY NOTES
-const dailyNote = document.querySelector(".note_text"),
+const dailyNoteContainer = document.querySelector(".note_text"),
     dailyNoteControll = document.getElementById("dailyNote_ctrl"),
     dailyNoteInput = document.getElementById("dailyNote_input");
 
@@ -122,36 +122,36 @@ dailyNoteInput.addEventListener("input", getDailyNote);
 dailyNoteControll.addEventListener("click", addDailyNote);
 
 function addDailyNote(e) {
-    const { daily_note } = journal;
-    daily_note.isEdit = daily_note.isEdit ? false : true;
+    const { dailyNote } = journal;
+    dailyNote.isEdit = dailyNote.isEdit ? false : true;
 
     saveToStorage(storage.journal, journal);
     renderDailyNote();
 }
 
 function getDailyNote() {
-    const { daily_note } = journal;
+    const { dailyNote } = journal;
 
-    daily_note.note = this.value;
-    dailyNoteInput.value = daily_note.note;
+    dailyNote.note = this.value;
+    dailyNoteInput.value = dailyNote.note;
 }
 
 function displayNote() {
-    const { daily_note } = journal;
+    const { dailyNote } = journal;
 
-    dailyNote.textContent = daily_note.note || `🌌 Do not go gentle into that good night. 🌌`;
+    dailyNoteContainer.textContent = dailyNote.note || `🌌 Do not go gentle into that good night. 🌌`;
 
-    if (daily_note.isEdit) {
+    if (dailyNote.isEdit) {
         dailyNoteControll.textContent = "Edit Note";
-        dailyNote.style.display = "flex";
+        dailyNoteContainer.style.display = "flex";
         dailyNoteInput.style.display = "none";
     } else {
         dailyNoteControll.textContent = "Add Note";
-        dailyNote.style.display = "none";
+        dailyNoteContainer.style.display = "none";
         dailyNoteInput.style.display = "flex";
     }
 
-    dailyNoteInput.value = daily_note.note || "";
+    dailyNoteInput.value = dailyNote.note || "";
 }
 
 function renderDailyNote() {
@@ -162,13 +162,13 @@ document.addEventListener(RENDER_NOTE, displayNote);
 
 // ======= ARCHIVE
 function clearJournal() {
-    journal.daily_note = { note: "", isEdit: false };
-    journal.my_day = [];
+    journal.dailyNote = { note: "", isEdit: false };
+    journal.myDay = [];
 }
 
 function createArchiveObject() {
-    const { daily_note, my_day } = journal;
-    return { daily_note, my_day };
+    const { dailyNote, myDay } = journal;
+    return { dailyNote, myDay };
 }
 
 function addToArchive() {
