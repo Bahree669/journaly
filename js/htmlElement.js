@@ -169,3 +169,53 @@ function createTaskModal(modalId, inputId, inputDateId, taskId, taskName, dueDat
     modal.append(dialogContent);
     return modal;
 }
+
+export function createTableHeader(data) {
+    const habitsEl = data.map((habit) => {
+        const th = document.createElement("th");
+        th.textContent = habit.name;
+        return th;
+    });
+
+    const dateEl = document.createElement("th");
+    dateEl.textContent = "Date";
+
+    habitsEl.unshift(dateEl);
+    return habitsEl;
+}
+
+export function createTableBody(data) {
+    const rows = data.map((data) => {
+        const tr = document.createElement("tr");
+        const tdDate = document.createElement("td");
+        tdDate.textContent = data.date;
+        tdDate.setAttribute("class", "tr_first");
+
+        tr.append(tdDate);
+        return tr;
+    });
+
+    const el = data.map((data) => {
+        const a = data.entries.map((entry, i) => {
+            const td = document.createElement("td");
+            const input = document.createElement("input");
+            input.setAttribute("type", "checkbox");
+
+            if (i === data.entries.length - 1) td.setAttribute("class", "tr_last");
+
+            td.append(input);
+            return td;
+        });
+
+        return a;
+    });
+
+    const tableRows = rows.map((row, i) => {
+        el[i].forEach((el) => {
+            row.append(el);
+        });
+        return row;
+    });
+
+    return tableRows;
+}

@@ -1,4 +1,4 @@
-import { createTask } from "./htmlElement.js";
+import { createTask, createTableHeader, createTableBody } from "./htmlElement.js";
 import { makeId } from "./util.js";
 import {
     isStorageAvailable,
@@ -8,7 +8,54 @@ import {
     dispatchStorageEvent,
 } from "./storage.js";
 
-const userHabits = [];
+/* 
+Habit ->   {id: "", name: "Habit Name",},
+HabitStatus -> {date: "", entries: [{id: "", status: false}]}
+*/
+
+const userHabits = {
+    habits: [
+        { id: makeId(), name: "Running 🏃‍♂️" },
+        { id: makeId(), name: "One chapter a day" },
+        { id: makeId(), name: "25 push up" },
+        { id: makeId(), name: "Go to the park" },
+    ],
+    habitStatus: [
+        {
+            date: "01-10-2022",
+            entries: [
+                { id: "", status: false },
+                { id: "", status: false },
+                { id: "", status: false },
+                { id: "", status: false },
+            ],
+        },
+        {
+            date: "02-10-2022",
+            entries: [
+                { id: "", status: false },
+                { id: "", status: false },
+                { id: "", status: false },
+                { id: "", status: false },
+            ],
+        },
+        {
+            date: "03-10-2022",
+            entries: [
+                { id: "", status: false },
+                { id: "", status: false },
+                { id: "", status: false },
+                { id: "", status: false },
+            ],
+        },
+    ],
+};
+
+/* 
+-> setiap iterasi di array habitStatus buat satu buah tr element,
+    buat td alement khusu untuk date
+*/
+
 const userTasks = [];
 const journal = {
     myDay: [],
@@ -24,6 +71,28 @@ const storage = {
     userTasks: "USER_TASKS",
     userHabits: "USER_HABITS",
 };
+
+const tableHeader = document.getElementById("habitHead"),
+    tableBody = document.getElementById("habitBody");
+function renderTableHeader() {
+    const el = createTableHeader(userHabits.habits);
+
+    tableHeader.innerHTML = "";
+    for (const x of el) {
+        tableHeader.append(x);
+    }
+}
+
+renderTableHeader();
+
+function renderTableBody() {
+    const el = createTableBody(userHabits.habitStatus);
+    console.log(el);
+    tableBody.innerHTML = "";
+    for (const x of el) tableBody.append(x);
+}
+
+renderTableBody();
 
 // check for local storage support
 document.addEventListener("DOMContentLoaded", () => {
@@ -201,9 +270,6 @@ const sortButton = document.querySelector(".sort_controll"),
 
 sortItems.forEach((item) => item.addEventListener("click", getFilterCategory));
 sortButton.addEventListener("click", (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
     sortPopUp.classList.toggle("open");
 });
 
@@ -336,13 +402,11 @@ function addToArchive() {
 // ======= DIALOG
 export function openModal(targetId) {
     const targetDialog = document.getElementById(targetId);
-    document.body.style.overflow = "hidden";
     targetDialog.showModal();
 }
 
 export function closeModal(targetId) {
     const targetDialog = document.getElementById(targetId);
-    document.body.style.overflow = "auto";
     targetDialog.close();
 }
 
