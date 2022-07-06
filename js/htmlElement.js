@@ -1,8 +1,18 @@
-import { openModal, closeModal, finishDailyTask, editDailyTask, deleteDailyTask, editUserTask } from "./app.js";
+import {
+    openModal,
+    closeModal,
+    finishDailyTask,
+    editDailyTask,
+    deleteDailyTask,
+    editUserTask,
+    deleteUserTask,
+} from "./app.js";
 
 export function createTask(category, task) {
     const { id, taskName, dueDate, isFinish } = task;
     const modalId = "taskModal_" + id;
+    const inputId = "taskInput_" + id;
+    const inputDateId = "taskInputDate_" + id;
 
     const container = document.createElement("div");
     container.setAttribute("class", "task_card");
@@ -10,7 +20,9 @@ export function createTask(category, task) {
     const input = document.createElement("input");
     input.setAttribute("type", "checkbox");
     input.setAttribute("id", id);
-    input.addEventListener("click", () => finishDailyTask(id));
+    if (category !== "TASK") {
+        input.addEventListener("click", () => finishDailyTask(id));
+    }
 
     const taskTitle = document.createElement("h6");
     taskTitle.textContent = taskName;
@@ -44,15 +56,20 @@ export function createTask(category, task) {
 
     if (category === "TASK") {
         taskContent.append(taskTitle, taskDueDate);
-        container.append(input, taskContent, taskControll, createTaskModal(modalId, id, taskName, dueDate));
+        container.append(
+            input,
+            taskContent,
+            taskControll,
+            createTaskModal(modalId, inputId, inputDateId, id, taskName, dueDate)
+        );
     } else {
-        container.append(input, taskTitle, taskControll, createDailyTaskModal(modalId, taskName, id));
+        container.append(input, taskTitle, taskControll, createDailyTaskModal(modalId, inputId, taskName, id));
     }
 
     return container;
 }
 
-function createDailyTaskModal(modalId, taskName, taskId) {
+function createDailyTaskModal(modalId, inputId, taskName, taskId) {
     const modal = document.createElement("dialog");
     modal.setAttribute("id", modalId);
 
@@ -61,7 +78,7 @@ function createDailyTaskModal(modalId, taskName, taskId) {
 
     const input = document.createElement("input");
     input.setAttribute("type", "text");
-    input.setAttribute("id", "taskEdit_input");
+    input.setAttribute("id", inputId);
     input.setAttribute("placeholder", "What is your goal today?");
     input.setAttribute("value", taskName);
 
@@ -92,7 +109,7 @@ function createDailyTaskModal(modalId, taskName, taskId) {
     return modal;
 }
 
-function createTaskModal(modalId, taskId, taskName, dueDate) {
+function createTaskModal(modalId, inputId, inputDateId, taskId, taskName, dueDate) {
     const modal = document.createElement("dialog");
     modal.setAttribute("id", modalId);
 
@@ -111,18 +128,17 @@ function createTaskModal(modalId, taskId, taskName, dueDate) {
 
     const inputTitle = document.createElement("input");
     inputTitle.setAttribute("type", "text");
+    inputTitle.setAttribute("id", inputId);
+    inputTitle.setAttribute("value", taskName);
     inputTitle.setAttribute("placeholder", "Go to the store");
     inputTitle.setAttribute("name", "task title");
-    inputTitle.setAttribute("autocomplete", "off");
     inputTitle.setAttribute("required", "");
-    inputTitle.setAttribute("id", "userTask_edit_title");
-    inputTitle.setAttribute("value", taskName);
 
     const inputDate = document.createElement("input");
     inputDate.setAttribute("type", "date");
     inputDate.setAttribute("value", dueDate);
     inputDate.setAttribute("name", "task title");
-    inputDate.setAttribute("id", "userTask_edit_date");
+    inputDate.setAttribute("id", inputDateId);
     inputDate.setAttribute("required", "");
 
     const btnSubmit = document.createElement("button");
@@ -138,6 +154,7 @@ function createTaskModal(modalId, taskId, taskName, dueDate) {
     const btnDelete = document.createElement("button");
     btnDelete.textContent = "Delete";
     btnDelete.setAttribute("class", "btn btn_alert");
+    btnDelete.addEventListener("click", () => deleteUserTask(taskId));
 
     inputContainerOne.append(inputTitle);
     inputContainerTwo.append(inputDate);

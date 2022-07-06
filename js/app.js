@@ -109,7 +109,7 @@ export function editDailyTask(targetId) {
     const { myDay } = journal;
     const targetTask = myDay.filter((task) => task.id === targetId)[0];
     const idxTaskInMyDay = myDay.findIndex((task) => task.id === targetId);
-    const taskName = document.getElementById("taskEdit_input").value;
+    const taskName = document.getElementById("taskInput_" + targetId).value;
 
     const taskObject = { ...targetTask, taskName };
 
@@ -256,11 +256,24 @@ export function editUserTask(targetId) {
     const targetInTask = userTasks.filter((task) => task.id === targetId)[0];
     const idxTargetInTask = userTasks.findIndex((task) => task.id === targetId);
 
-    const taskName = document.getElementById("userTask_edit_title").value;
-    const dueDate = document.getElementById("userTask_edit_date").value;
+    const taskName = document.getElementById("taskInput_" + targetId).value;
+    const dueDate = document.getElementById("taskInputDate_" + targetId).value;
 
     const editedTask = { ...targetInTask, taskName, dueDate };
-    userTasks.splice(idxTargetInTask, 1, editedTask);
+    userTasks.splice(idxTargetInTask, 1);
+    userTasks.unshift(editedTask);
+
+    // console.log(taskName, dueDate);
+    // console.log(editedTask);
+    // console.log(userTasks);
+
+    saveToStorage(storage.userTasks, userTasks);
+    renderUserTasks();
+}
+
+export function deleteUserTask(targetId) {
+    const idxTargetInTask = userTasks.findIndex((task) => task.id === targetId);
+    userTasks.splice(idxTargetInTask, 1);
 
     saveToStorage(storage.userTasks, userTasks);
     renderUserTasks();
@@ -273,7 +286,7 @@ function renderUserTasks() {
 function displayUserTasks() {
     userTaskContainer.innerHTML = "";
 
-    for (const task of userTasks.reverse()) {
+    for (const task of userTasks) {
         const taskCard = createTask("TASK", task);
         userTaskContainer.append(taskCard);
     }
