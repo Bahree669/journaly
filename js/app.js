@@ -226,12 +226,10 @@ function addUserTask(e) {
     saveToStorage(storage.userTasks, userTasks);
 }
 
-let sortCategory = "UNFINISHED";
+let sortCategory = "ALL";
 function getFilterCategory(e) {
     sortCategory = this.dataset.value;
     filterTask(sortCategory);
-
-    console.log("category :", sortCategory);
 
     highlightFilterCategory(sortCategory);
     sortPopUp.classList.remove("open");
@@ -249,7 +247,7 @@ function highlightFilterCategory(category) {
 highlightFilterCategory(sortCategory);
 
 function filterTask(category) {
-    console.log("sorting...");
+    renderUserTasks();
 }
 
 export function editUserTask(targetId) {
@@ -298,16 +296,27 @@ function renderUserTasks() {
     document.dispatchEvent(new Event(RENDER_TASKS));
 }
 
-function displayUserTasks() {
+function displayUserTasks(category) {
     userTaskContainer.innerHTML = "";
 
-    for (const task of userTasks) {
+    let tasks;
+    if (category === "UNFINISHED") {
+        tasks = userTasks.filter((task) => task.isFinish === false);
+    } else if (category === "FINISHED") {
+        tasks = userTasks.filter((task) => task.isFinish === true);
+    } else {
+        tasks = userTasks;
+    }
+
+    for (const task of tasks) {
         const taskCard = createTask("TASK", task);
         userTaskContainer.append(taskCard);
     }
 }
 
-document.addEventListener(RENDER_TASKS, displayUserTasks);
+document.addEventListener(RENDER_TASKS, () => {
+    displayUserTasks(sortCategory);
+});
 
 // ======= ARCHIVE
 function clearJournal() {
