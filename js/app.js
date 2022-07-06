@@ -263,9 +263,24 @@ export function editUserTask(targetId) {
     userTasks.splice(idxTargetInTask, 1);
     userTasks.unshift(editedTask);
 
-    // console.log(taskName, dueDate);
-    // console.log(editedTask);
-    // console.log(userTasks);
+    saveToStorage(storage.userTasks, userTasks);
+    renderUserTasks();
+}
+
+export function finishUserTask(targetId) {
+    const targetTask = userTasks.filter((task) => task.id === targetId)[0];
+    const idxTaskInMyDay = userTasks.findIndex((task) => task.id === targetId);
+
+    const finishedTask = { ...targetTask, isFinish: targetTask.isFinish ? false : true };
+
+    userTasks.splice(idxTaskInMyDay, 1);
+
+    // Move the finished task to bottom
+    if (finishedTask.isFinish) {
+        userTasks.push(finishedTask);
+    } else {
+        userTasks.unshift(finishedTask);
+    }
 
     saveToStorage(storage.userTasks, userTasks);
     renderUserTasks();

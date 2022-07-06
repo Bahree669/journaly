@@ -6,6 +6,7 @@ import {
     deleteDailyTask,
     editUserTask,
     deleteUserTask,
+    finishUserTask,
 } from "./app.js";
 
 export function createTask(category, task) {
@@ -20,7 +21,9 @@ export function createTask(category, task) {
     const input = document.createElement("input");
     input.setAttribute("type", "checkbox");
     input.setAttribute("id", id);
-    if (category !== "TASK") {
+    if (category === "TASK") {
+        input.addEventListener("click", () => finishUserTask(id));
+    } else {
         input.addEventListener("click", () => finishDailyTask(id));
     }
 
