@@ -1,4 +1,4 @@
-import { openModal, closeModal, finishDailyTask, editDailyTask, deleteDailyTask } from "./app.js";
+import { openModal, closeModal, finishDailyTask, editDailyTask, deleteDailyTask, editUserTask } from "./app.js";
 
 export function createTask(category, task) {
     const { id, taskName, dueDate, isFinish } = task;
@@ -92,7 +92,7 @@ function createDailyTaskModal(modalId, taskName, taskId) {
     return modal;
 }
 
-function createTaskModal(modalId, id, taskName, dueDate) {
+function createTaskModal(modalId, taskId, taskName, dueDate) {
     const modal = document.createElement("dialog");
     modal.setAttribute("id", modalId);
 
@@ -102,7 +102,7 @@ function createTaskModal(modalId, id, taskName, dueDate) {
     const dialogTitle = document.createElement("h4");
     dialogTitle.textContent = "Edit Task";
 
-    const form = document.createElement("form");
+    const form = document.createElement("div");
     form.setAttribute("id", "userTask_edit");
     form.setAttribute("class", "myDay_form");
 
@@ -128,6 +128,7 @@ function createTaskModal(modalId, id, taskName, dueDate) {
     const btnSubmit = document.createElement("button");
     btnSubmit.textContent = "Save Edit";
     btnSubmit.setAttribute("class", "btn btn_main");
+    btnSubmit.addEventListener("click", () => editUserTask(taskId));
 
     const btnCancel = document.createElement("button");
     btnCancel.textContent = "Cancel";

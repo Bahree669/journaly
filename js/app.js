@@ -24,17 +24,21 @@ const storage = {
     userTasks: "USER_TASKS",
     userHabits: "USER_HABITS",
 };
-// check for local storage support
 
+// check for local storage support
 document.addEventListener("DOMContentLoaded", () => {
     if (isStorageAvailable()) {
         const savedJournal = getItemFromStorage(storage.journal);
+        const savedUserTask = getItemFromStorage(storage.userTasks);
 
         journal.myDay = savedJournal ? savedJournal.myDay : journal.myDay;
         journal.dailyNote = savedJournal ? savedJournal.dailyNote : journal.dailyNote;
 
+        if (savedUserTask) for (const task of savedUserTask) userTasks.push(task);
+
         renderDailyTask();
         renderDailyNote();
+        renderUserTasks();
     }
 });
 
@@ -48,9 +52,12 @@ const RENDER_NOTE = "RENDER_NOTE",
 
 // ======= LOCAL STORAGE
 document.addEventListener(STORAGE_EVENT, () => {
-    console.log(JSON.parse(localStorage.getItem(storage.journal)));
-    console.log(JSON.parse(localStorage.getItem(storage.userTasks)));
-    console.log(JSON.parse(localStorage.getItem(storage.userHabits)));
+    const { journal, userHabits, userTasks } = storage;
+    const a = getItemFromStorage(journal),
+        b = getItemFromStorage(userTasks),
+        c = getItemFromStorage(userHabits);
+
+    console.log({ a, b, c });
 });
 
 // ======= DAILY TASKS
@@ -78,7 +85,7 @@ function createTaskObject(taskName, taskDuedate) {
     return { id: makeId(), taskName: taskName, dueDate: taskDuedate, isFinish: false };
 }
 
-export function finishDailyTask(e, targetId) {
+export function finishDailyTask(targetId) {
     const { myDay } = journal;
     const targetTask = myDay.filter((task) => task.id === targetId)[0];
     const idxTaskInMyDay = myDay.findIndex((task) => task.id === targetId);
@@ -87,6 +94,7 @@ export function finishDailyTask(e, targetId) {
 
     myDay.splice(idxTaskInMyDay, 1);
 
+    // Move the finished task to bottom
     if (taskObject.isFinish) {
         myDay.push(taskObject);
     } else {
@@ -163,7 +171,7 @@ function getDailyNote() {
 function displayNote() {
     const { dailyNote } = journal;
 
-    dailyNoteContainer.textContent = dailyNote.note || `🌌 Do not go gentle into that good night. 🌌`;
+    dailyNoteContainer.textContent = dailyNote.note || "Be nice to others 💖";
 
     if (dailyNote.isEdit) {
         dailyNoteControll.textContent = "Edit Note";
@@ -183,6 +191,95 @@ function renderDailyNote() {
 }
 
 document.addEventListener(RENDER_NOTE, displayNote);
+
+// ======= USER TASKS
+const sortButton = document.querySelector(".sort_controll"),
+    sortPopUp = document.querySelector(".sort_value"),
+    sortItems = document.querySelectorAll(".sort_item"),
+    userTaskForm = document.getElementById("userTask_form"),
+    userTaskContainer = document.getElementById("userTask_container");
+
+sortItems.forEach((item) => item.addEventListener("click", getFilterCategory));
+sortButton.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    sortPopUp.classList.toggle("open");
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    userTaskForm.addEventListener("submit", (e) => {
+        addUserTask(e);
+    });
+});
+
+function addUserTask(e) {
+    e.preventDefault();
+
+    const taskName = document.getElementById("userTask_title").value;
+    const taskDate = document.getElementById("userTask_date").value;
+
+    const taskObject = createTaskObject(taskName, taskDate);
+    userTasks.push(taskObject);
+
+    renderUserTasks();
+    saveToStorage(storage.userTasks, userTasks);
+}
+
+let sortCategory = "UNFINISHED";
+function getFilterCategory(e) {
+    sortCategory = this.dataset.value;
+    filterTask(sortCategory);
+
+    console.log("category :", sortCategory);
+
+    highlightFilterCategory(sortCategory);
+    sortPopUp.classList.remove("open");
+}
+
+function highlightFilterCategory(category) {
+    sortItems.forEach((item) => {
+        if (item.dataset.value !== category) item.classList.remove("active");
+    });
+    sortItems.forEach((item) => {
+        if (item.dataset.value == category) item.classList.add("active");
+    });
+}
+
+highlightFilterCategory(sortCategory);
+
+function filterTask(category) {
+    console.log("sorting...");
+}
+
+export function editUserTask(targetId) {
+    const targetInTask = userTasks.filter((task) => task.id === targetId)[0];
+    const idxTargetInTask = userTasks.findIndex((task) => task.id === targetId);
+
+    const taskName = document.getElementById("userTask_edit_title").value;
+    const dueDate = document.getElementById("userTask_edit_date").value;
+
+    const editedTask = { ...targetInTask, taskName, dueDate };
+    userTasks.splice(idxTargetInTask, 1, editedTask);
+
+    saveToStorage(storage.userTasks, userTasks);
+    renderUserTasks();
+}
+
+function renderUserTasks() {
+    document.dispatchEvent(new Event(RENDER_TASKS));
+}
+
+function displayUserTasks() {
+    userTaskContainer.innerHTML = "";
+
+    for (const task of userTasks.reverse()) {
+        const taskCard = createTask("TASK", task);
+        userTaskContainer.append(taskCard);
+    }
+}
+
+document.addEventListener(RENDER_TASKS, displayUserTasks);
 
 // ======= ARCHIVE
 function clearJournal() {
@@ -214,3 +311,6 @@ export function closeModal(targetId) {
 
 document.getElementById("myDay_addTask").addEventListener("click", () => openModal("myDay_dialog"));
 document.getElementById("myDay_cancelTask").addEventListener("click", () => closeModal("myDay_dialog"));
+
+document.getElementById("taskDialog_btn").addEventListener("click", () => openModal("taskDialog"));
+document.getElementById("userTask_cancel").addEventListener("click", () => closeModal("taskDialog"));
