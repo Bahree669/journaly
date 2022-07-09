@@ -1,4 +1,10 @@
-import { createTask, createTableHeader, createTableBody } from "./htmlElement.js";
+import {
+    createTask,
+    createTableHeader,
+    createTableBody,
+    createLoadingAnimation,
+    createQuoteCard,
+} from "./htmlElement.js";
 import { makeId } from "./util.js";
 import {
     isStorageAvailable,
@@ -8,55 +14,13 @@ import {
     dispatchStorageEvent,
 } from "./storage.js";
 
-/* 
-Habit ->   {id: "", name: "Habit Name",},
-HabitStatus -> {date: "", entries: [{id: "", status: false}]}
-*/
-
 const userHabits = {
-    habits: [
-        { id: makeId(), name: "Running 🏃‍♂️" },
-        { id: makeId(), name: "One chapter a day" },
-        { id: makeId(), name: "25 push up" },
-        { id: makeId(), name: "Go to the park" },
-    ],
-    habitStatus: [
-        {
-            date: "01-10-2022",
-            entries: [
-                { id: "", status: false },
-                { id: "", status: false },
-                { id: "", status: false },
-                { id: "", status: false },
-            ],
-        },
-        {
-            date: "02-10-2022",
-            entries: [
-                { id: "", status: false },
-                { id: "", status: false },
-                { id: "", status: false },
-                { id: "", status: false },
-            ],
-        },
-        {
-            date: "03-10-2022",
-            entries: [
-                { id: "", status: false },
-                { id: "", status: false },
-                { id: "", status: false },
-                { id: "", status: false },
-            ],
-        },
-    ],
+    habits: [],
+    habitStatus: [],
 };
 
-/* 
--> setiap iterasi di array habitStatus buat satu buah tr element,
-    buat td alement khusu untuk date
-*/
-
 const userTasks = [];
+
 const journal = {
     myDay: [],
     dailyNote: {
@@ -72,39 +36,27 @@ const storage = {
     userHabits: "USER_HABITS",
 };
 
-const tableHeader = document.getElementById("habitHead"),
-    tableBody = document.getElementById("habitBody");
-function renderTableHeader() {
-    const el = createTableHeader(userHabits.habits);
-
-    tableHeader.innerHTML = "";
-    for (const x of el) {
-        tableHeader.append(x);
-    }
-}
-
-renderTableHeader();
-
-function renderTableBody() {
-    const el = createTableBody(userHabits.habitStatus);
-    console.log(el);
-    tableBody.innerHTML = "";
-    for (const x of el) tableBody.append(x);
-}
-
-renderTableBody();
-
 // check for local storage support
 document.addEventListener("DOMContentLoaded", () => {
     if (isStorageAvailable()) {
         const savedJournal = getItemFromStorage(storage.journal);
         const savedUserTask = getItemFromStorage(storage.userTasks);
+        const savedHabits = getItemFromStorage(storage.userHabits);
 
         journal.myDay = savedJournal ? savedJournal.myDay : journal.myDay;
         journal.dailyNote = savedJournal ? savedJournal.dailyNote : journal.dailyNote;
 
         if (savedUserTask) for (const task of savedUserTask) userTasks.push(task);
+        if (savedHabits) {
+            const habits = savedHabits.habits;
+            const habitStatuses = savedHabits.habitStatus;
 
+            for (const habit of habits) userHabits.habits.push(habit);
+            for (const status of habitStatuses) userHabits.habitStatus.push(status);
+        }
+
+        renderTableHeader();
+        renderTableBody();
         renderDailyTask();
         renderDailyNote();
         renderUserTasks();
@@ -285,11 +237,13 @@ function addUserTask(e) {
     const taskName = document.getElementById("userTask_title").value;
     const taskDate = document.getElementById("userTask_date").value;
 
-    const taskObject = createTaskObject(taskName, taskDate);
-    userTasks.push(taskObject);
+    if (taskName && taskDate) {
+        const taskObject = createTaskObject(taskName, taskDate);
+        userTasks.unshift(taskObject);
 
-    renderUserTasks();
-    saveToStorage(storage.userTasks, userTasks);
+        renderUserTasks();
+        saveToStorage(storage.userTasks, userTasks);
+    }
 }
 
 let sortCategory = "ALL";
@@ -384,19 +338,199 @@ document.addEventListener(RENDER_TASKS, () => {
     displayUserTasks(sortCategory);
 });
 
+// ======= USER HABITS
+
+/* 
+Habit ->   {id: "", name: "Habit Name",},
+HabitStatus -> {id: makeId(), date: "", habits: [{id: "", entryId="entryId" status: false}]}
+*/
+
+const tableHeader = document.getElementById("habitHead"),
+    tableBody = document.getElementById("habitBody");
+
+function renderTableHeader() {
+    const el = createTableHeader(userHabits.habits);
+
+    console.log("table header rendered");
+
+    tableHeader.innerHTML = "";
+    for (const x of el) tableHeader.append(x);
+}
+
+function renderTableBody() {
+    const el = createTableBody(userHabits.habitStatus);
+
+    console.log("table body rendered");
+
+    tableBody.innerHTML = "";
+    for (const x of el) tableBody.append(x);
+}
+
+document.getElementById("addHabit").addEventListener("click", addHabit);
+document.getElementById("addEntry").addEventListener("click", addHabitRow);
+
+let index = 1;
+function addHabit() {
+    userHabits.habits.push({ id: makeId(), name: "New habit " + index });
+    index++;
+
+    saveToStorage(storage.userHabits, userHabits);
+    renderTableHeader();
+    addHabitEntry();
+}
+
+export function removeHabit(targetId) {
+    const idxTarget = userHabits.habits.findIndex((habit) => habit.id === targetId);
+    userHabits.habits.splice(idxTarget, 1);
+
+    if (!userHabits.habits.length) deleteAllRows();
+
+    removeTableColumn(idxTarget);
+
+    saveToStorage(storage.userHabits, userHabits);
+    renderTableHeader();
+}
+
+export function editHabitName(e, targetId) {
+    const key = e.key;
+
+    if (key === "Enter") {
+        const input = e.target.value;
+        if (!input.length) return displayToast("Habit name is to short!");
+
+        const idxTarget = userHabits.habits.findIndex((habit) => habit.id === targetId);
+        userHabits.habits[idxTarget].name = input;
+        saveToStorage(storage.userHabits, userHabits);
+        renderTableHeader();
+    }
+}
+
+function removeTableColumn(index) {
+    userHabits.habitStatus.forEach((status) => {
+        status.habits.splice(index, 1);
+    });
+
+    renderTableBody();
+}
+
+function addHabitRow() {
+    const date = new Date();
+
+    if (!userHabits.habits.length) return displayToast("Cannot add new entry to habits null :')");
+
+    const rowId = makeId();
+
+    userHabits.habitStatus.push({
+        rowId,
+        date: `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`,
+        habits: [],
+    });
+
+    for (const x of userHabits.habitStatus) {
+        const diff = Math.abs(userHabits.habits.length - x.habits.length);
+
+        for (let i = 0; i < diff; i++) {
+            x.habits.push({ id: makeId(), entryId: rowId, status: false });
+        }
+    }
+
+    saveToStorage(storage.userHabits, userHabits);
+    if (userHabits.habitStatus.length) renderTableBody();
+}
+
+export function setHabitStatus(targetId, entryId) {
+    const habitStatus = userHabits.habitStatus;
+
+    const entryIndex = habitStatus.findIndex((status) => status.rowId === entryId);
+    const targetIndex = habitStatus[entryIndex].habits.findIndex((entry) => entry.id === targetId);
+    const target = habitStatus[entryIndex].habits[targetIndex];
+
+    const newStatus = { ...target, status: target.status ? false : true };
+
+    habitStatus[entryIndex].habits.splice(targetIndex, 1, newStatus);
+    saveToStorage(storage.userHabits, userHabits);
+    renderTableBody();
+}
+
+export function deleteHabitRow(targetId) {
+    const idxTarget = userHabits.habitStatus.findIndex((status) => status.rowId === targetId);
+
+    userHabits.habitStatus.splice(idxTarget, 1);
+    saveToStorage(storage.userHabits, userHabits);
+    renderTableBody();
+}
+
+function deleteAllRows() {
+    userHabits.habitStatus.splice(0);
+    saveToStorage(storage.userHabits, userHabits);
+}
+
+function addHabitEntry() {
+    for (const x of userHabits.habitStatus) {
+        const diff = Math.abs(userHabits.habits.length - x.habits.length);
+
+        for (let i = 0; i < diff; i++) {
+            x.habits.push({ id: "", status: false });
+        }
+    }
+
+    renderTableBody();
+}
+
 // ======= ARCHIVE
-function clearJournal() {
-    journal.dailyNote = { note: "", isEdit: false };
-    journal.myDay = [];
+const api_url = "https://api.quotable.io/random?minLength=100&maxLength=140";
+
+const quoteContainer = document.getElementById("quoteContainer");
+
+async function getQuote(url) {
+    renderQuotes(null, "loading");
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data) {
+            renderQuotes(data, "finished");
+        }
+    } catch (error) {
+        renderQuotes(error.message, "error");
+        console.log(error.message);
+    }
 }
 
-function createArchiveObject() {
-    const { dailyNote, myDay } = journal;
-    return { dailyNote, myDay };
+function renderQuotes(data, status) {
+    quoteContainer.innerHTML = "";
+
+    if (status === "loading") {
+        const loader = createLoadingAnimation();
+        quoteContainer.append(loader);
+        return;
+    }
+
+    if (status === "finished") {
+        const quoteEl = createQuoteCard(data);
+        quoteContainer.append(quoteEl);
+        return;
+    }
+
+    quoteContainer.innerHTML = `<p style="color: #fdfdfd; font-size:14px;">${data}</p>`;
 }
 
-function addToArchive() {
-    userArchives.push(createArchiveObject());
+getQuote(api_url);
+
+document.getElementById("getNewQuote").addEventListener("click", () => getQuote(api_url));
+
+// ======= TOAST NOTIFICATION
+const toast = document.getElementById("toast");
+
+function displayToast(message) {
+    toast.textContent = message;
+    toast.classList.add("active");
+
+    toast.addEventListener("animationend", () => {
+        toast.textContent = "";
+        toast.classList.remove("active");
+    });
 }
 
 // ======= DIALOG

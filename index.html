@@ -5,21 +5,38 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>My Journal</title>
+
+        <link rel="stylesheet" href="css/normalize.css" />
         <link rel="stylesheet" href="css/style.css" />
     </head>
     <body>
+        <div id="toast" class="toast"></div>
+
+        <div class="banner"></div>
+
         <header class="header mx-width">
-            <h1 class="header_title">My Journal</h1>
+            <h1 class="header_title">My Journal 📙</h1>
         </header>
         <main class="main_container mx-width">
             <section class="grid">
                 <!-- TODO SECTION -->
                 <article class="myDay_section">
                     <header class="section_title taskSection_header">
-                        <h2>My Day</h2>
+                        <h2>My Day 🌞</h2>
 
                         <div>
-                            <button class="btn btn_main" id="myDay_addTask">Add Task</button>
+                            <button class="btn btn_main btn_tooltip" data-tooltip="Add new task" id="myDay_addTask">
+                                <div class="btn_icon">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="24"
+                                        height="24"
+                                        style="fill: #fdfdfd"
+                                    >
+                                        <path d="M19 11h-6V5h-2v6H5v2h6v6h2v-6h6z"></path>
+                                    </svg>
+                                </div>
+                            </button>
 
                             <dialog id="myDay_dialog">
                                 <div class="dialog_content">
@@ -33,6 +50,7 @@
                                                 id="taskTitle"
                                                 name="task title"
                                                 autocomplete="off"
+                                                required
                                             />
                                         </div>
 
@@ -51,7 +69,7 @@
 
                 <!-- NOTE SECTION -->
                 <article class="note_section">
-                    <header class="section_title"><h2>Daily Note</h2></header>
+                    <header class="section_title"><h2>Daily Note 📝</h2></header>
 
                     <section class="content daily_note">
                         <div class="note">
@@ -73,28 +91,27 @@
 
             <section>
                 <article class="habit_section">
-                    <header class="section_title">
-                        <h2>Habits Tracker</h2>
+                    <header class="section_title taskSection_header">
+                        <h2>Habits Tracker 💪</h2>
+
+                        <nav class="taskSection_nav">
+                            <ul role="lits" aria-label="habits section controll">
+                                <li>
+                                    <button id="addHabit" class="btn btn_main">Add Habits</button>
+                                </li>
+                                <li>
+                                    <button id="addEntry" class="btn btn_main">Add Entry</button>
+                                </li>
+                            </ul>
+                        </nav>
                     </header>
 
                     <section class="content">
                         <table class="habit_table">
                             <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Running</th>
-                                </tr>
+                                <tr id="habitHead"></tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td>01/10/2020</td>
-                                    <td>true</td>
-                                </tr>
-                                <tr>
-                                    <td>02/10/2020</td>
-                                    <td>true</td>
-                                </tr>
-                            </tbody>
+                            <tbody id="habitBody"></tbody>
                         </table>
                     </section>
                 </article>
@@ -104,38 +121,105 @@
                 <!-- TASK SECTION -->
                 <article class="taskSection">
                     <header class="section_title taskSection_header">
-                        <h2>Tasks</h2>
+                        <h2>Tasks 📒</h2>
 
                         <nav class="taskSection_nav">
-                            <ul>
+                            <ul role="list" aria-label="task controll">
                                 <li>
                                     <div class="sort_element">
-                                        <button class="btn btn_main sort_controll">Sort Tasks</button>
+                                        <button
+                                            class="btn btn_main sort_controll btn_tooltip"
+                                            data-tooltip="Filter your tasks"
+                                        >
+                                            <div class="btn_icon">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    width="24"
+                                                    height="24"
+                                                    style="fill: #fdfdfd"
+                                                >
+                                                    <path
+                                                        d="M21 3H5a1 1 0 0 0-1 1v2.59c0 .523.213 1.037.583 1.407L10 13.414V21a1.001 1.001 0 0 0 1.447.895l4-2c.339-.17.553-.516.553-.895v-5.586l5.417-5.417c.37-.37.583-.884.583-1.407V4a1 1 0 0 0-1-1zm-6.707 9.293A.996.996 0 0 0 14 13v5.382l-2 1V13a.996.996 0 0 0-.293-.707L6 6.59V5h14.001l.002 1.583-5.71 5.71z"
+                                                    ></path>
+                                                </svg>
+                                            </div>
+                                        </button>
 
                                         <ul class="sort_value">
-                                            <li>Ascending</li>
-                                            <li>Descending</li>
-                                            <li>By due date (ascending)</li>
-                                            <li>By due date (descending)</li>
+                                            <li class="sort_item" data-value="ALL">All</li>
+                                            <li class="sort_item" data-value="FINISHED">Finished</li>
+                                            <li class="sort_item" data-value="UNFINISHED">Unfinished</li>
                                         </ul>
                                     </div>
                                 </li>
                                 <li>
-                                    <button class="btn btn_main">Add Tasks</button>
+                                    <div>
+                                        <button
+                                            class="btn btn_main btn_tooltip"
+                                            data-tooltip="Add new task"
+                                            id="taskDialog_btn"
+                                        >
+                                            <div class="btn_icon">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    width="24"
+                                                    height="24"
+                                                    style="fill: #fdfdfd"
+                                                >
+                                                    <path d="M19 11h-6V5h-2v6H5v2h6v6h2v-6h6z"></path>
+                                                </svg>
+                                            </div>
+                                        </button>
+
+                                        <dialog id="taskDialog">
+                                            <div class="dialog_content">
+                                                <h4>Add Task</h4>
+
+                                                <form id="userTask_form" class="myDay_form">
+                                                    <div class="input_container">
+                                                        <input
+                                                            type="text"
+                                                            placeholder="Go to the store"
+                                                            id="userTask_title"
+                                                            name="task title"
+                                                            autocomplete="off"
+                                                            required
+                                                        />
+                                                    </div>
+                                                    <div class="input_container">
+                                                        <input
+                                                            type="date"
+                                                            name="due date"
+                                                            id="userTask_date"
+                                                            required
+                                                        />
+                                                    </div>
+
+                                                    <button type="submit" class="btn btn_main">Add Task</button>
+                                                </form>
+
+                                                <button class="btn btn_secondary" id="userTask_cancel">Cancel</button>
+                                            </div>
+                                        </dialog>
+                                    </div>
                                 </li>
                             </ul>
                         </nav>
                     </header>
 
-                    <section class="content task_container"></section>
+                    <section class="content task_container" id="userTask_container"></section>
                 </article>
                 <!-- END OF TASK SECTION -->
 
                 <!-- ARCHIVE SECTION -->
                 <article class="archive_section">
-                    <header class="section_title"><h2>Archives</h2></header>
+                    <header class="section_title taskSection_header">
+                        <h2>Daily Quote</h2>
 
-                    <section class="content"></section>
+                        <button class="btn btn_main" id="getNewQuote">Get new quote</button>
+                    </header>
+
+                    <section id="quoteContainer" class="content"></section>
                 </article>
                 <!-- END OF ARCHIVE SECTION -->
             </section>

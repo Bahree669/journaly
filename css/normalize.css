@@ -1,0 +1,40 @@
+/* ======================== */
+/* RESET */
+/* ======================== */
+
+*,
+*::after,
+*::before {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: var(--cc-dark-100);
+    font-family: var(--font-family);
+}
+
+li {
+    list-style: none;
+}
+
+::-webkit-scrollbar {
+    width: 4px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: var(--cc-dark-80);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: var(--cc-red-100);
+    border-radius: 100em;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: var(--c-accent-darkBlue-two);
+}
