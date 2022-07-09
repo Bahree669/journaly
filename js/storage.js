@@ -16,10 +16,6 @@ export function getItemFromStorage(storageKey) {
     return JSON.parse(data);
 }
 
-export function removeItemFromStorage(storageKey) {
-    localStorage.clear(storageKey);
-}
-
 export function dispatchStorageEvent(event) {
     document.dispatchEvent(new Event(event));
 }

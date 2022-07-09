@@ -6,13 +6,7 @@ import {
     createQuoteCard,
 } from "./htmlElement.js";
 import { makeId } from "./util.js";
-import {
-    isStorageAvailable,
-    saveToStorage,
-    getItemFromStorage,
-    removeItemFromStorage,
-    dispatchStorageEvent,
-} from "./storage.js";
+import { isStorageAvailable, saveToStorage, getItemFromStorage, dispatchStorageEvent } from "./storage.js";
 
 const userHabits = {
     habits: [],
@@ -66,9 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // ======= RENDER AND STORAGE EVENTS
 const RENDER_NOTE = "RENDER_NOTE",
     RENDER_DAILY_TASK = "RENDER_DAILY_TASK",
-    RENDER_HABITS = "RENDER_HABITS",
     RENDER_TASKS = "RENDER_TASKS",
-    RENDER_ARCHIVE = "RENDER_ARCHIVE",
     STORAGE_EVENT = "STORAGE_EVENT";
 
 // ======= LOCAL STORAGE
@@ -339,19 +331,11 @@ document.addEventListener(RENDER_TASKS, () => {
 });
 
 // ======= USER HABITS
-
-/* 
-Habit ->   {id: "", name: "Habit Name",},
-HabitStatus -> {id: makeId(), date: "", habits: [{id: "", entryId="entryId" status: false}]}
-*/
-
 const tableHeader = document.getElementById("habitHead"),
     tableBody = document.getElementById("habitBody");
 
 function renderTableHeader() {
     const el = createTableHeader(userHabits.habits);
-
-    console.log("table header rendered");
 
     tableHeader.innerHTML = "";
     for (const x of el) tableHeader.append(x);
@@ -359,8 +343,6 @@ function renderTableHeader() {
 
 function renderTableBody() {
     const el = createTableBody(userHabits.habitStatus);
-
-    console.log("table body rendered");
 
     tableBody.innerHTML = "";
     for (const x of el) tableBody.append(x);

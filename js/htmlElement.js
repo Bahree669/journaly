@@ -195,6 +195,7 @@ export function createTableHeader(data) {
         input.setAttribute("onFocus", 'this.placeholder="Hit enter to save changes"');
         input.setAttribute("onBlur", 'this.placeholder="Task name"');
         input.setAttribute("placeholder", "Task name");
+        input.setAttribute("tabindex", "-1");
         input.addEventListener("keyup", (e) => editHabitName(e, habit.id));
 
         div.append(input, deleteButton);
