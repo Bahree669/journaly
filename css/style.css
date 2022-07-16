@@ -468,11 +468,17 @@ td.tr_first div p {
 td.tr_first div button {
     font-size: var(--fs-body);
     display: inline-block;
-    opacity: 0;
+    opacity: 1;
 }
 
-td.tr_first div:hover button {
-    opacity: 1;
+@media screen and (min-width: 500px) {
+    td.tr_first div button {
+        opacity: 0;
+    }
+
+    td.tr_first div:hover button {
+        opacity: 1;
+    }
 }
 
 td.tr_last {
@@ -485,6 +491,10 @@ td.tr_last {
     outline: none;
     border: none;
     color: var(--cc-white-100);
+}
+
+.table_input:focus ~ button {
+    opacity: 1;
 }
 
 /* ======================== */
