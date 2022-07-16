@@ -22,24 +22,30 @@ const journal = {
         isEdit: false,
     },
 };
-const userArchives = [];
 
-const storage = {
+const storageKeys = {
     journal: "JOURNAL",
     userTasks: "USER_TASKS",
     userHabits: "USER_HABITS",
 };
 
+const modalIds = {
+    myDay: "myDay_dialog",
+    userTask: "taskDialog",
+};
+
 // check for local storage support
 document.addEventListener("DOMContentLoaded", () => {
     if (isStorageAvailable()) {
-        const savedJournal = getItemFromStorage(storage.journal);
-        const savedUserTask = getItemFromStorage(storage.userTasks);
-        const savedHabits = getItemFromStorage(storage.userHabits);
+        const savedJournal = getItemFromStorage(storageKeys.journal),
+            savedUserTask = getItemFromStorage(storageKeys.userTasks),
+            savedHabits = getItemFromStorage(storageKeys.userHabits);
 
-        journal.myDay = savedJournal ? savedJournal.myDay : journal.myDay;
-        journal.dailyNote = savedJournal ? savedJournal.dailyNote : journal.dailyNote;
-
+        // if the saved value is !null then use that value else use the defaults value
+        if (savedJournal) {
+            journal.myDay = savedJournal.myDay;
+            journal.dailyNote = savedJournal.dailyNote;
+        }
         if (savedUserTask) for (const task of savedUserTask) userTasks.push(task);
         if (savedHabits) {
             const habits = savedHabits.habits;
@@ -64,8 +70,10 @@ const RENDER_NOTE = "RENDER_NOTE",
     STORAGE_EVENT = "STORAGE_EVENT";
 
 // ======= LOCAL STORAGE
+
+// the code bellow only for debugging purpose - it's not neccesary
 document.addEventListener(STORAGE_EVENT, () => {
-    const { journal, userHabits, userTasks } = storage;
+    const { journal, userHabits, userTasks } = storageKeys;
     const a = getItemFromStorage(journal),
         b = getItemFromStorage(userTasks),
         c = getItemFromStorage(userHabits);
@@ -84,17 +92,20 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function addDailyTask(e) {
-    const { myDay } = journal;
     e.preventDefault();
+
+    const { myDay } = journal;
     const taskName = document.getElementById("taskTitle").value;
-    const taskObject = createTaskObject(taskName, null);
+    const taskObject = createTaskObject(taskName);
 
     myDay.unshift(taskObject);
-    saveToStorage(storage.journal, journal);
+
+    saveToStorage(storageKeys.journal, journal);
     renderDailyTask();
+    closeModal(modalIds.myDay);
 }
 
-function createTaskObject(taskName, taskDuedate) {
+function createTaskObject(taskName, taskDuedate = null) {
     return { id: makeId(), taskName: taskName, dueDate: taskDuedate, isFinish: false };
 }
 
@@ -103,18 +114,15 @@ export function finishDailyTask(targetId) {
     const targetTask = myDay.filter((task) => task.id === targetId)[0];
     const idxTaskInMyDay = myDay.findIndex((task) => task.id === targetId);
 
-    const taskObject = { ...targetTask, isFinish: targetTask.isFinish ? false : true };
+    const finishedTaskObject = { ...targetTask, isFinish: !targetTask.isFinish };
 
     myDay.splice(idxTaskInMyDay, 1);
 
-    // Move the finished task to bottom
-    if (taskObject.isFinish) {
-        myDay.push(taskObject);
-    } else {
-        myDay.unshift(taskObject);
-    }
+    // move the finished task to bottom and unfinished task to top
+    if (finishedTaskObject.isFinish) myDay.push(finishedTaskObject);
+    else myDay.unshift(finishedTaskObject);
 
-    saveToStorage(storage.journal, journal);
+    saveToStorage(storageKeys.journal, journal);
     renderDailyTask();
 }
 
@@ -124,12 +132,12 @@ export function editDailyTask(targetId) {
     const idxTaskInMyDay = myDay.findIndex((task) => task.id === targetId);
     const taskName = document.getElementById("taskInput_" + targetId).value;
 
-    const taskObject = { ...targetTask, taskName };
+    const editedTaskObject = { ...targetTask, taskName };
 
     myDay.splice(idxTaskInMyDay, 1);
-    myDay.unshift(taskObject);
+    myDay.unshift(editedTaskObject);
 
-    saveToStorage(storage.journal, journal);
+    saveToStorage(storageKeys.journal, journal);
     renderDailyTask();
 }
 
@@ -138,7 +146,7 @@ export function deleteDailyTask(targetId) {
     const idxTaskInMyDay = myDay.findIndex((task) => task.id === targetId);
     myDay.splice(idxTaskInMyDay, 1);
 
-    saveToStorage(storage.journal, journal);
+    saveToStorage(storageKeys.journal, journal);
     renderDailyTask();
 }
 
@@ -168,9 +176,9 @@ dailyNoteControll.addEventListener("click", addDailyNote);
 
 function addDailyNote(e) {
     const { dailyNote } = journal;
-    dailyNote.isEdit = dailyNote.isEdit ? false : true;
+    dailyNote.isEdit = !dailyNote.isEdit;
 
-    saveToStorage(storage.journal, journal);
+    saveToStorage(storageKeys.journal, journal);
     renderDailyNote();
 }
 
@@ -234,7 +242,8 @@ function addUserTask(e) {
         userTasks.unshift(taskObject);
 
         renderUserTasks();
-        saveToStorage(storage.userTasks, userTasks);
+        saveToStorage(storageKeys.userTasks, userTasks);
+        closeModal(modalIds.userTask);
     }
 }
 
@@ -273,7 +282,7 @@ export function editUserTask(targetId) {
     userTasks.splice(idxTargetInTask, 1);
     userTasks.unshift(editedTask);
 
-    saveToStorage(storage.userTasks, userTasks);
+    saveToStorage(storageKeys.userTasks, userTasks);
     renderUserTasks();
 }
 
@@ -286,13 +295,10 @@ export function finishUserTask(targetId) {
     userTasks.splice(idxTaskInMyDay, 1);
 
     // Move the finished task to bottom
-    if (finishedTask.isFinish) {
-        userTasks.push(finishedTask);
-    } else {
-        userTasks.unshift(finishedTask);
-    }
+    if (finishedTask.isFinish) userTasks.push(finishedTask);
+    else userTasks.unshift(finishedTask);
 
-    saveToStorage(storage.userTasks, userTasks);
+    saveToStorage(storageKeys.userTasks, userTasks);
     renderUserTasks();
 }
 
@@ -300,7 +306,7 @@ export function deleteUserTask(targetId) {
     const idxTargetInTask = userTasks.findIndex((task) => task.id === targetId);
     userTasks.splice(idxTargetInTask, 1);
 
-    saveToStorage(storage.userTasks, userTasks);
+    saveToStorage(storageKeys.userTasks, userTasks);
     renderUserTasks();
 }
 
@@ -312,13 +318,9 @@ function displayUserTasks(category) {
     userTaskContainer.innerHTML = "";
 
     let tasks;
-    if (category === "UNFINISHED") {
-        tasks = userTasks.filter((task) => task.isFinish === false);
-    } else if (category === "FINISHED") {
-        tasks = userTasks.filter((task) => task.isFinish === true);
-    } else {
-        tasks = userTasks;
-    }
+    if (category === "UNFINISHED") tasks = userTasks.filter((task) => task.isFinish === false);
+    else if (category === "FINISHED") tasks = userTasks.filter((task) => task.isFinish === true);
+    else tasks = userTasks;
 
     for (const task of tasks) {
         const taskCard = createTask("TASK", task);
@@ -356,7 +358,7 @@ function addHabit() {
     userHabits.habits.push({ id: makeId(), name: "New habit " + index });
     index++;
 
-    saveToStorage(storage.userHabits, userHabits);
+    saveToStorage(storageKeys.userHabits, userHabits);
     renderTableHeader();
     addHabitEntry();
 }
@@ -369,7 +371,7 @@ export function removeHabit(targetId) {
 
     removeTableColumn(idxTarget);
 
-    saveToStorage(storage.userHabits, userHabits);
+    saveToStorage(storageKeys.userHabits, userHabits);
     renderTableHeader();
 }
 
@@ -381,8 +383,9 @@ export function editHabitName(e, targetId) {
         if (!input.length) return displayToast("Habit name is to short!");
 
         const idxTarget = userHabits.habits.findIndex((habit) => habit.id === targetId);
+
         userHabits.habits[idxTarget].name = input;
-        saveToStorage(storage.userHabits, userHabits);
+        saveToStorage(storageKeys.userHabits, userHabits);
         renderTableHeader();
     }
 }
@@ -408,15 +411,15 @@ function addHabitRow() {
         habits: [],
     });
 
-    for (const x of userHabits.habitStatus) {
-        const diff = Math.abs(userHabits.habits.length - x.habits.length);
+    for (const habitStatus of userHabits.habitStatus) {
+        const diff = Math.abs(userHabits.habits.length - habitStatus.habits.length);
 
         for (let i = 0; i < diff; i++) {
-            x.habits.push({ id: makeId(), entryId: rowId, status: false });
+            habitStatus.habits.push({ id: makeId(), entryId: rowId, status: false });
         }
     }
 
-    saveToStorage(storage.userHabits, userHabits);
+    saveToStorage(storageKeys.userHabits, userHabits);
     if (userHabits.habitStatus.length) renderTableBody();
 }
 
@@ -430,7 +433,7 @@ export function setHabitStatus(targetId, entryId) {
     const newStatus = { ...target, status: target.status ? false : true };
 
     habitStatus[entryIndex].habits.splice(targetIndex, 1, newStatus);
-    saveToStorage(storage.userHabits, userHabits);
+    saveToStorage(storageKeys.userHabits, userHabits);
     renderTableBody();
 }
 
@@ -438,13 +441,13 @@ export function deleteHabitRow(targetId) {
     const idxTarget = userHabits.habitStatus.findIndex((status) => status.rowId === targetId);
 
     userHabits.habitStatus.splice(idxTarget, 1);
-    saveToStorage(storage.userHabits, userHabits);
+    saveToStorage(storageKeys.userHabits, userHabits);
     renderTableBody();
 }
 
 function deleteAllRows() {
     userHabits.habitStatus.splice(0);
-    saveToStorage(storage.userHabits, userHabits);
+    saveToStorage(storageKeys.userHabits, userHabits);
 }
 
 function addHabitEntry() {
@@ -459,8 +462,8 @@ function addHabitEntry() {
     renderTableBody();
 }
 
-// ======= ARCHIVE
-const api_url = "https://api.quotable.io/random?minLength=100&maxLength=140";
+// ======= QUOTE GENERATOR
+const QUOTE_ENDPOINT = "https://api.quotable.io/random?minLength=100&maxLength=140";
 
 const quoteContainer = document.getElementById("quoteContainer");
 
@@ -498,9 +501,9 @@ function renderQuotes(data, status) {
     quoteContainer.innerHTML = `<p style="color: #fdfdfd; font-size:14px;">${data}</p>`;
 }
 
-getQuote(api_url);
+getQuote(QUOTE_ENDPOINT);
 
-document.getElementById("getNewQuote").addEventListener("click", () => getQuote(api_url));
+document.getElementById("getNewQuote").addEventListener("click", () => getQuote(QUOTE_ENDPOINT));
 
 // ======= TOAST NOTIFICATION
 const toast = document.getElementById("toast");
@@ -517,17 +520,15 @@ function displayToast(message) {
 
 // ======= DIALOG
 export function openModal(targetId) {
-    const targetDialog = document.getElementById(targetId);
-    targetDialog.showModal();
+    document.getElementById(targetId).showModal();
 }
 
 export function closeModal(targetId) {
-    const targetDialog = document.getElementById(targetId);
-    targetDialog.close();
+    document.getElementById(targetId).close();
 }
 
-document.getElementById("myDay_addTask").addEventListener("click", () => openModal("myDay_dialog"));
-document.getElementById("myDay_cancelTask").addEventListener("click", () => closeModal("myDay_dialog"));
+document.getElementById("myDay_addTask").addEventListener("click", () => openModal(modalIds.myDay));
+document.getElementById("myDay_cancelTask").addEventListener("click", () => closeModal(modalIds.myDay));
 
-document.getElementById("taskDialog_btn").addEventListener("click", () => openModal("taskDialog"));
-document.getElementById("userTask_cancel").addEventListener("click", () => closeModal("taskDialog"));
+document.getElementById("taskDialog_btn").addEventListener("click", () => openModal(modalIds.userTask));
+document.getElementById("userTask_cancel").addEventListener("click", () => closeModal(modalIds.userTask));
