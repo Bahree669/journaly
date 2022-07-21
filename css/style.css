@@ -400,7 +400,6 @@ select {
 /* HABITS SECTION */
 /* ======================== */
 table {
-    table-layout: fixed;
     width: max-content;
 }
 
